@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<style>
+		*{
+			margin: 0;
+			padding: 0;
+		}
+		.clearfix:after{
+			content:"";
+			clear:both;
+			display: block;
+			
+		}
+			#calendar{
+				width: 490px;
+				padding: 35px;
+				background: rgba(5,5,5,0.9) url(dong_zhiwu_164185_12.jpg) center;
+				margin:40px auto;
+							}
+			#day{
+				clear:both;
+			}
+			
+			#day li{
+				list-style: none;
+				text-align: center;
+				float:left;
+				width:70px;
+				font:16px/30px "微软雅黑";
+				background:#FFA0DF;
+			}
+			#nowTime{
+				font:36px/48px "微软雅黑";
+				color:white;
+				padding-bottom: 10px;
+				display: 
+			}
+			#nowDate{
+				color: blue;
+				padding-bottom: 26px;
+			}
+			
+			#yearAndMonth{
+				padding: 15px 0 0 0;
+				color: white;
+			}
+			#myDate{
+				width:490px;
+			}
+			#myDate span{
+				/*float: left;*/
+				display: inline-block;
+				width: 70px;
+				height: 60px;
+				color: white;
+				text-align: center;
+				vertical-align: middle;
+				line-height: 60px;
+			}
+			#myDate .not{
+				color:dimgrey;
+			}
+			#myDate .today{
+				background:#FFFF00;
+				color:black;
+			}
+			#preMonth{
+				background: url(pre.png) center;
+				color: white;
+				float:right;
+				width:70px;
+				height: 30px;
+				text-align: center;
+			}
+			#nextMonth{
+				background: url(next.png) center;
+				color: white;
+				float: right;
+				width:70px;
+				height: 30px;
+				text-align: center;
+			}
+			
+		</style>
+	</head>
+	<body>
+	<div id="calendar">
+		 <h2 id="nowTime"></h2>
+		 <p id="nowDate"><span id="year"></span>年<span id="month"></span>月<span id="curdate"></span>日，星期<span id="curDay"></span></p>
+		
+		 <span id="yearAndMonth"></span>
+		 <span id="preMonth" >pre</span>
+		 <span id="nextMonth">next</span>
+		　<ul id="day" class="clearfix">
+			<li>日</li>
+			<li>一</li>
+			<li>二</li>
+			<li>三</li>
+			<li>四</li>
+			<li>五</li>
+			<li>六</li>
+		</ul>
+		<div id="myDate"></div>
+	</div>
+	<script>
+		window.onload=function(){
+			var time=setTimeout(function(){
+			var calendar=document.getElementById("calendar");
+			calendar.style.background="rgba(10,10,10,0.9)";
+			},1000)
+			var days=["日","一","二","三","四","五","六"];
+			var year=document.getElementById("year");
+			var myDate=document.getElementById("myDate");
+			var month=document.getElementById("month");
+			var curdate=document.getElementById("curdate");
+			var curDay=document.getElementById("curDay");
+			var time=document.getElementById("time");
+			var yearAndMonth=document.getElementById("yearAndMonth");
+			var nextMonth=document.getElementById("nextMonth");
+			var preMonth=document.getElementById("preMonth");
+			var nowDate=document.getElementById("nowDate");
+			
+			var timer;
+			var realDate=new Date();
+			yearAndMonth.innerHTML=realDate.getFullYear()+"年"+formatNum(realDate.getMonth()+1)+"月";
+			var changeDate=realDate;
+			nowDate.onclick=function(){
+				var newDate=new Date();
+				upTime(newDate);
+				setdays(newDate);
+			}
+			nextMonth.onclick=function(){
+				
+				var next=changeDate.getMonth()+1;
+				var year=changeDate.getFullYear();
+				if(next==12){
+					changeDate.setFullYear(year+1)
+					changeDate.setMonth(0);
+				}
+				else{
+					changeDate.setMonth(next);
+				}
+				upTime(changeDate);
+				setdays(changeDate);
+				
+			}
+			
+			preMonth.onclick=function(){
+				
+				var pre=changeDate.getMonth()-1;
+				var year=changeDate.getFullYear();
+				if(pre==-1){
+					changeDate.setFullYear(year-1)
+					changeDate.setMonth(11);
+				}
+				else{
+					changeDate.setMonth(pre);
+				}
+				setdays(changeDate);
+				upTime(changeDate);
+			}
+			
+			function upTime(curDate){
+				//console.log(curDate.getFullYear());
+				//console.log(formatNum(curDate.getMonth()+1));
+				yearAndMonth.innerHTML=curDate.getFullYear()+"年"+formatNum(curDate.getMonth()+1)+"月";
+			}
+			
+			function updateTime(){
+				var curDate=new Date();
+				year.innerHTML=curDate.getFullYear();
+				month.innerHTML=formatNum(curDate.getMonth()+1);
+				curdate.innerHTML=curDate.getDate();
+				curDay.innerHTML=days[curDate.getDay()];
+				nowTime.innerHTML=formatNum(curDate.getHours())+":"+formatNum(curDate.getMinutes())+":"+formatNum(curDate.getSeconds());
+				
+			}
+			function formatNum(n){
+				if(n<10)
+				n='0'+n;
+				return n;
+			}
+		
+			timer=setInterval(updateTime,1000);
+			function getDaysInMonth(year,month){
+      			month = parseInt(month,10)+1;
+      			var temp = new Date;
+      			temp.setFullYear(year);
+      			temp.setMonth(month);
+      			temp.setDate(0);
+      			//console.log(temp.getDate());
+      			return temp.getDate();
+			}
+			
+			var todayDate=realDate.getDate();
+			function setdays(dateDays){
+				var dateForDays= new Date();
+				var year=dateDays.getFullYear();
+				var month=dateDays.getMonth();
+				dateForDays.setFullYear(year);
+				dateForDays.setMonth(month);
+				var curYear=dateForDays.getFullYear();
+				var curMonth=dateForDays.getMonth();//得到当月第一天是星期几
+				var daysInLastMonth;
+				var daysInCurMonth
+				if(curMonth==0){
+					daysInLastMonth=getDaysInMonth(curYear-1,11);
+				}
+				else {
+					daysInLastMonth=getDaysInMonth(curYear,curMonth-1);
+				}
+				daysInCurMonth=getDaysInMonth(curYear,curMonth);
+				console.log(daysInCurMonth);
+				var dayForFirstDate;
+				dateForDays.setDate(1);
+				dayForFirstDate=dateForDays.getDay();
+				dateForDays.setDate(daysInCurMonth);
+				dayForlastDate=dateForDays.getDay();
+				//console.log(dayForFirstDate);
+				
+				var dayStr="";
+				var nextMonthDay=1;
+				if(dayForFirstDate==0){
+					for(var j=0;j<7;j++){
+						
+						dayStr="<span class='not'>"+(daysInLastMonth--)+"</span>"+dayStr;
+					}
+					for(var i=0;i<daysInCurMonth;i++)
+					{
+						var k=i+1;
+						if(k==todayDate){
+							dayStr=dayStr+"<span class='today'>"+k+"</span>";
+						}
+						else{
+						dayStr=dayStr+"<span>"+k+"</span>";
+						}
+					}
+					if(dayForlastDate==6){
+						for(var m=0;m<7;m++)
+						{
+							dayStr=dayStr+"<span class='not'>"+(nextMonthDay++)+"</span>";
+						}
+					
+					}
+					else{
+						for(var n=dayForlastDate;n<6;n++)
+						{
+							dayStr=dayStr+"<span class='not'>"+(nextMonthDay++)+"</span>";
+						}
+					}
+				}
+				else{
+					for(var z=0;z<42;z++)
+					{
+						if(z<dayForFirstDate){
+							dayStr="<span class='not'>"+(daysInLastMonth--)+"</span>"+dayStr;
+						}
+						else if(z>=(dayForFirstDate+daysInCurMonth)){
+							dayStr=dayStr+"<span class='not'>"+(nextMonthDay++)+"</span>";
+						}
+						else{
+							if((z-dayForFirstDate+1)==todayDate){
+							dayStr=dayStr+"<span class='today'>"+(z-dayForFirstDate+1)+"</span>";
+							}
+							else{
+							dayStr=dayStr+"<span >"+(z-dayForFirstDate+1)+"</span>";
+							}//console.log(dayStr);
+						}
+					}
+				}
+				myDate.innerHTML=dayStr;
+			}
+			var dateShow=new Date();
+			setdays(dateShow);
+		}
+	</script>
+	</body>
+</html>
